@@ -1,0 +1,130 @@
+---
+title: "using echart4r"
+author: "Peter Boshe"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r warning=FALSE}
+library(tidyverse)
+library(echarts4r)
+library(janitor)
+
+# parameters
+
+file_raw_all_csv <- here::here("data-raw/summary_activity_all_countries.csv")
+file_raw_brand_mz <- here::here("data-raw/mz_brand_in_country.csv")
+file_raw_summary_mz <- here::here("data-raw/summary_activity_mz.csv")
+```
+
+```{r}
+all_summary_activity <- read_csv(file_raw_all_csv)
+
+all_summary_activity |> 
+  slice_max(order_by = qty, n = 20)
+```
+
+
+ - need to address data quality issue
+ - what is the difference between different variances of brand names
+
+```{r}
+all_summary_activity |> 
+  slice_max(order_by = qty, n = 50) |>  
+  # group_by(brand) |> 
+  e_charts(brand) |> 
+  e_bar(serie = qty, 
+        itemStyle = list(color = "darkGreen",
+                         borderColor = "black",
+                         borderWidth = "2")) |> 
+  e_flip_coords() |>
+  e_y_axis(inverse = TRUE) |> 
+  e_legend(show = FALSE) |> 
+  e_title("Dominant brands in polutting",
+          left = "100",
+          textStyle = list(fontsize = 24)) |> 
+  e_labels(position = "insideRight") |> 
+  e_animation(duration = 4000)
+
+```
+
+
+```{r include=FALSE}
+all_summary_activity |> 
+  group_by(brand) |> 
+  e_charts(brand) |> 
+  e_bar(serie = qty, 
+        itemStyle = list(color = "darkGreen",
+                         borderColor = "black",
+                         borderWidth = "2")) |> 
+  e_flip_coords() |>
+  e_y_axis(inverse = TRUE) |> 
+  e_legend(show = FALSE) |> 
+  e_title("Dominant brands in polutting",
+          left = "100",
+          textStyle = list(fontsize = 24)) |> 
+  e_labels(position = "insideRight") |> 
+  e_animation(duration = 4000)
+```
+
+
+
+
+```{r}
+summary_in_mz <- read_csv(file_raw_summary_mz)
+
+summary_in_mz |> 
+   slice_max(order_by = qty, n = 50) |>  
+  # group_by(brand) |> 
+  e_charts(brand) |> 
+  e_bar(serie = qty, 
+        itemStyle = list(color = "darkGreen",
+                         borderColor = "black",
+                         borderWidth = "2")) |> 
+  e_flip_coords() |>
+  e_y_axis(inverse = TRUE) |> 
+  e_legend(show = FALSE) |> 
+  e_title("Activity summary in Mozambique",
+          left = "100",
+          textStyle = list(fontsize = 24)) |> 
+  e_labels(position = "insideRight") |> 
+  e_animation(duration = 4000)
+```
+
+
+
+
+```{r}
+brand_in_mz <- read_csv(file_raw_brand_mz)
+
+brand_in_mz |> 
+  # slice_max(order_by = qty, n = 50) |>  
+  # group_by(brand) |> 
+  e_charts(brand_name) |> 
+  e_bar(serie = count, 
+        itemStyle = list(color = "darkGreen",
+                         borderColor = "black",
+                         borderWidth = "2")) |> 
+  e_flip_coords() |>
+  e_y_axis(inverse = TRUE) |> 
+  e_legend(show = FALSE) |> 
+  e_title("Dominant brands in Mozambique",
+          left = "100",
+          textStyle = list(fontsize = 24)) |> 
+  e_labels(position = "insideRight") |> 
+  e_animation(duration = 4000)
+```
+
+
+
+
+
+
+
+
+
+
