@@ -8,3 +8,6 @@ This a template for a data analysis project.
 An explanation of how to use this project organization can be found in [Project workflow](https://dcl-workflow.stanford.edu/project-workflow.html).
 
 Here is an [example project](https://github.com/dcl-docs/project-example) based upon this template.
+
+
+![Dope image](https://github.com/PeterTOC/wastebase/blob/main/docs/dataviz.png)
