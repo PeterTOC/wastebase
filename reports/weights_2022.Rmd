@@ -1,0 +1,300 @@
+---
+title: "Weight of cummulative plastic"
+author: "Peter Boshe"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+
+```{r}
+library(tidyverse)
+library(ggpattern)
+library(ggtext)
+library(patchwork)
+library(magick)
+
+# parameters
+
+# input
+file_raw <- here::here("data-raw/weight_summary_20220815-1335.csv")
+file_raw2 <- here::here("data-raw/weight_summary_20220816-1035.csv")
+file_raw3 <- here::here("data-raw/weight_summary_20220816-1045.csv")
+file_raw4 <- here::here("data-raw/weight_summary_20220816-1048.csv")
+file_raw5 <- here::here("data-raw/weight_summary_20220816-1052.csv")
+bottles2 <- here::here("docs/bottles2.png")
+
+# import
+df <- read_csv(file_raw)
+df_2021 <- read_csv(file_raw2)
+df_tojune <- read_csv(file_raw3)
+df_toapril <- read_csv(file_raw4)
+df_tomarch <- read_csv(file_raw5)
+
+# output
+file_out <- here::here("docs/dataviz.png")
+file_out2 <- here::here("docs/dataviz.pdf")
+file_out3 <- here::here("docs/dataviz.jpg")
+
+
+title_text <- "<span style='text-decoration:underline'>Weight of bottles scanned per brand in <span style='color:#FF9B42'>2022</span></span>"
+subtitle_text <- "By the time we see the full extent of the damage, it might be too late..."
+caption_text <- "data source:wastebase.org<br>author:Peter Boshe <span style='color:#FF9B42'>peterboshe.netlify.app</span>"
+label_text <-  data.frame(x = c(19,15,11.1,7,22), y = c(460,460,460,460,460),
+                          label = c("One metric tonne of plastic bottles<br>were scanned in the year 2021,<br> an amount that was already surpassed <br>by the end of February in <span style='color:#FF9B42'>2022</span>.","The \'top\' 3 brands alone namely;<br> Água de Namaacha, Fizz, <br>and Coca-Cola,<br>had already contributed <br>a metric tonne by the end<br> of March in <span style='color:#FF9B42'>2022</span>.","To this date, the total weight of<br>bottles scanned in <span style='color:#FF9B42'>2022</span> is<br>already above 2 tonnes,<br>and it's just August...","...to be continued?", "How bad is it, really? "))
+
+back_ground <- "#002E2C"
+font_color <- "cornsilk"
+
+```
+
+
+```{r, include=FALSE, eval=FALSE}
+if (require("magick")) {
+  df |> 
+  group_by(brand) |> 
+  summarise(total_weight = sum(weight_kg)) |> 
+  mutate(pct_of_total = (total_weight/sum(total_weight))*100) |>
+  arrange(desc(total_weight)) |> 
+  mutate(brand = fct_inorder(brand)) |> 
+  ggplot(aes(brand, total_weight)) +
+  geom_bar_pattern(stat = "identity",
+                   pattern = "image",
+                   pattern_type = "tile",
+                   pattern_scale = 0.15,
+                   pattern_filename = bottles2,
+                   color = "cornsilk") +
+  scale_pattern_filename_discrete(choices = bottles2) +
+    coord_flip() +
+    theme_void() +
+  theme(
+    axis.text.x = element_text(
+      angle = 90,
+      color = font_color
+    ),
+    axis.text.y = element_text(
+      color = font_color
+      ),
+    panel.background = element_rect(
+      fill = back_ground
+    ),
+    plot.background = element_rect(
+      fill = back_ground
+    ),
+    panel.border = element_rect(
+      color = back_ground,
+      fill = back_ground
+    )
+  ) +
+  coord_cartesian(expand = T,
+                  clip = "off") +
+  plot_annotation(
+    title = title_text,
+    subtitle = subtitle_text,
+    caption = caption_text,
+    theme = theme(
+
+      plot.title = element_textbox_simple(
+       size = 18,
+      lineheight = 1,
+      padding = margin(5.5, 5.5, 5.5, 5.5),
+      margin = margin(0, 0, 5.5, 0),
+      fill = back_ground,
+      colour = font_color,
+      face = "bold"
+      ),
+      plot.subtitle = element_markdown(
+        size = 13,
+        colour = font_color,
+        padding = margin(5.5, 5.5, 5.5, 5.5),
+      margin = margin(0, 0, 5.5, 0)
+      ),
+      plot.caption.position = 'plot',
+      plot.caption = element_markdown(
+        hjust = 0, 
+        size = 9, 
+        colour = "darkgrey", 
+        lineheight = 1.25
+      ),
+      plot.background = element_rect(fill = back_ground, colour = NA)))
+ }
+  
+```
+
+
+
+
+```{r include=FALSE}
+p <- df |> 
+  group_by(brand) |> 
+  summarise(total_weight = sum(weight_kg)) |> 
+  mutate(pct_of_total = (total_weight/sum(total_weight))*100) |>
+  arrange(desc(total_weight)) |> 
+  mutate(brand = fct_inorder(brand)) |> 
+  ggplot(aes(brand, total_weight)) +
+  geom_bar_pattern(stat = "identity",
+                   pattern = "image",
+                   pattern_type = "tile",
+                   pattern_scale = 0.2,
+                   pattern_filename = bottles2,
+                   color = "cornsilk",
+                   width = .95) +
+  coord_flip(expand = T,
+                  clip = "off") +
+    # coord_cartesian() +
+  # labs( title = "", x = "Kg") +
+  theme_void() +
+    theme(
+    axis.text.x = element_text(
+         face = "bold",
+      color = font_color
+    ),
+    axis.text.y = element_text(
+         face = "bold",
+      color = font_color,
+      ),
+    panel.background = element_rect(
+      fill = back_ground,
+      color = back_ground
+    ),
+    plot.background = element_rect(
+      fill = back_ground,
+      color = back_ground
+    ),
+    axis.title.x = element_text(
+      color = font_color,
+      hjust = 0.92
+    ),
+    # plot.title.position = "bottom",
+    plot.title = element_text(
+      color = font_color,
+      hjust = 0,
+      size = 15,
+      margin = margin(0,0,20,45),
+      face = "bold"
+    ),
+    plot.caption = element_text(
+         face = "bold",
+      size = 12
+    )
+  ) +
+  geom_richtext(data = label_text,
+                aes(x = x,
+                    y = y,
+                    label = label),
+                fill = NA,
+                label.color = NA,
+                color = "cornsilk",
+                size = 5.3,
+                family = "AvantGarde",
+                fontface = "bold") + 
+  labs(y = "Total Weight(Kg)") +
+  scale_y_continuous(breaks = seq(0,1000,200),
+                     limits = c(0,850))
+ 
+
+p 
+```
+
+
+```{r fig.height=10, fig.width=10}
+ p +
+   plot_annotation(
+     title = title_text,
+     caption = caption_text,
+     subtitle = subtitle_text,
+     theme = theme(
+       plot.title = element_textbox_simple(
+         size = 19,
+         # lineheight = 1,
+         padding = margin(5.5, 5.5, 5.5, 5.5),
+         margin = margin(0, 0, 5.5, 0),
+         fill = "#002E2C",
+         colour = "cornsilk",
+         face = "bold",
+         family= "AvantGarde"
+       ),
+      plot.background = element_rect(fill = '#002E2C',
+                                     colour = NA),
+      plot.caption.position = 'plot',
+      plot.caption = element_markdown(
+        hjust = 0, 
+        size = 9, 
+        colour = font_color, 
+        lineheight = 1.25
+      ),
+      plot.subtitle = element_textbox_simple(
+        size = 13,
+        margin = margin(0, 0, 15.5, 0),
+        padding = margin(5.5, 5.5, 5.5, 5.5),
+        color = "#FF9B42",
+        family = "AvantGarde",
+        face = "bold.italic",
+      )
+     )
+   )
+
+ggsave(file_out, width = 600, height = 800, units = "px", dpi = "screen")
+ggsave(file_out2,device = "pdf")
+ggsave(file_out3, width = 600, height = 800, units = "px", dpi = "screen", device = "jpeg")
+  
+```
+
+
+```{r echo=TRUE,collapse=TRUE}
+sum(df_2021$weight_kg)
+sum(df$weight_kg)
+sum(df_tojune$weight_kg)
+sum(df_toapril$weight_kg)
+sum(df_tomarch$weight_kg)
+```
+
+
+
+```{r echo=TRUE,collapse=TRUE}
+filtered_data <- df_toapril |> 
+  filter(brand %in% c("Água de Namaacha", "Fizz","Coca-Cola"))
+
+sum(filtered_data$weight_kg)
+
+```
+
+
+
+
+```{r}
+q <- df |> 
+  group_by(brand) |> 
+  summarise(total_weight = sum(weight_kg)) |> 
+  mutate(pct_of_total = (total_weight/sum(total_weight))*100) |>
+  arrange(desc(total_weight)) |> 
+  mutate(brand = fct_inorder(brand)) |> 
+  ggplot(aes(brand, total_weight)) +
+  geom_bar_pattern(stat = "identity",
+                   pattern = "image",
+                   pattern_type = "tile",
+                   pattern_scale = 0.2,
+                   pattern_filename = bottles2,
+                   color = "cornsilk",
+                   width = .95) +
+  coord_flip(expand = T,
+                  clip = "off") +
+  labs(x = "kg")
+q
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
