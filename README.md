@@ -1,13 +1,9 @@
-# Project 
+# Wastebase Personal Repository
 
-This a template for a data analysis project.
+This is my repository for all data analysis activities regarding wastebase, since signing as a data collaborator agreement with the organization (yay me!), I have been granted added access and hence more room to play... hence this play ground.
 
-* To create a repo that is a copy, log into GitHub and use the green _Use this template_ button.
-* To create a non-repo, local copy, use _Clone or download_ > _Download ZIP_.
+### Sample DataViz 
 
-An explanation of how to use this project organization can be found in [Project workflow](https://dcl-workflow.stanford.edu/project-workflow.html).
-
-Here is an [example project](https://github.com/dcl-docs/project-example) based upon this template.
-
+- Published in Wastebase's monthly report [link](https://lnkd.in/dm2xN24a)<br>
 
 ![Dope image](https://github.com/PeterTOC/wastebase/blob/main/docs/dataviz.png)
